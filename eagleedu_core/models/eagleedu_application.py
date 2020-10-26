@@ -15,7 +15,6 @@ class EagleeduApplication(models.Model):
 
     application_no = fields.Char(string='Application No.', required=True, copy=False, readonly=True,
                        index=True, default=lambda self: _('New'))
-
     application_date = fields.Datetime('Application Date', default=lambda self: fields.datetime.now())  # , default=fields.Datetime.now, required=True
     name = fields.Char(string='Student Name', required=True, help="Enter Name of Student")
     st_name_b = fields.Char(string='Student Bangla Name')
@@ -32,21 +31,14 @@ class EagleeduApplication(models.Model):
     mother_mobile = fields.Char(string="Mother's Mobile No", help="mother's Mobile No")
     date_of_birth = fields.Date(string="Date Of birth", help="Enter your DOB")
     age = fields.Char(compute="get_student_age", string="Age", store=True, help="Enter your DOB")
-
     st_gender = fields.Selection([('male', 'Male'), ('female', 'Female'), ('other', 'Other')],
-                                string='Gender', required=False, track_visibility='onchange',
-                                help="Your Gender is ")
+                                string='Gender', required=False, track_visibility='onchange', help="Your Gender is ")
     st_blood_group = fields.Selection([('a+', 'A+'), ('a-', 'A-'), ('b+', 'B+'), ('o+', 'O+'), ('o-', 'O-'),
-                                    ('ab-', 'AB-'), ('ab+', 'AB+')],
-                                   string='Blood Group', track_visibility='onchange',
-                                   help="Your Blood Group is ")
+                                    ('ab-', 'AB-'), ('ab+', 'AB+')], string='Blood Group', track_visibility='onchange', help="Your Blood Group is ")
     st_passport_no = fields.Char(string="Passport No.", help="Proud to say my father is", required=False)
-    nationality = fields.Many2one('res.country', string='Nationality', ondelete='restrict',default=19,
-                                help="Select the Nationality")
-    academic_year = fields.Many2one('eagleedu.academic.year', string='Academic Year',
-                                help="Choose Academic year for which the admission is choosing")
-    register_id = fields.Many2one('eagleedu.register', string="Admission Register", required=True,
-                                      help="Enter the admission register Name")
+    nationality = fields.Many2one('res.country', string='Nationality', ondelete='restrict',default=19, help="Select the Nationality")
+    academic_year = fields.Many2one('eagleedu.academic.year', string='Academic Year',  help="Choose Academic year for which the admission is choosing")
+    register_id = fields.Many2one('eagleedu.register', string="Admission Register", required=True, help="Enter the admission register Name")
     import_id=fields.Many2one('eagleedu.import.previous.student', string="Import Student")
 
 # todo all Name in bangla unicode should auto fill and translate to bangla language
@@ -118,40 +110,36 @@ class EagleeduApplication(models.Model):
     post_office = fields.Char(string='Post Office', help="Enter the Post Office Name")
     city = fields.Char(string='City', help="Enter the City name")
     bd_division_id = fields.Many2one('eagleedu.bddivision', string= 'State / Division')
-    country_id = fields.Many2one('res.country', string='Country', ondelete='restrict',default=19,
-                                 help="Select the Country")
-    if_same_address = fields.Boolean(string="Permanent Address same as above", default=True,
-                                     help="Tick the field if the Present and permanent address is same")
+    country_id = fields.Many2one('res.country', string='Country', ondelete='restrict',default=19, help="Select the Country")
+    if_same_address = fields.Boolean(string="Permanent Address same as above", default=True, help="Tick the field if the Present and permanent address is same")
     per_village = fields.Char(string='Village Name', help="Enter the Village Name")
     per_po = fields.Char(string='Post Office Name', help="Enter the Post office Name ")
     per_ps = fields.Char(string='Police Station', help="Enter the Police Station Name")
     per_dist_id = fields.Many2one('eagleedu.bddistrict', string='District', help="Enter the City of District name")
     per_bd_division_id = fields.Many2one('eagleedu.bddivision', string='State / Division', help="Enter the City of District name")
-    per_country_id = fields.Many2one('res.country', string='Country', ondelete='restrict', default=19,
-                                     help="Select the Country")
+    per_country_id = fields.Many2one('res.country', string='Country', ondelete='restrict', default=19, help="Select the Country")
     guardian_name = fields.Char(string="Guardian's Name", help="Proud to say my guardian is")
-    guardian_relation = fields.Many2one('eagleedu.guardian.relation', string="Relation to Guardian",  required=False,
-                                        help="Tell us the Relation toyour guardian")
+    guardian_relation = fields.Many2one('eagleedu.guardian.relation', string="Relation to Guardian", help="Tell us the Relation toyour guardian")
     guardian_mobile = fields.Char(string="guardian's Mobile No", help="guardian's Mobile No")
-
     religious_id = fields.Many2one('eagleedu.religious', string="Religious", help="My Religion is ")
     class_id = fields.Many2one('eagleedu.class')
-    academic_year = fields.Many2one('eagleedu.academic.year', string='Academic Year')
+    academic_year_id = fields.Many2one('eagleedu.academic.year', related='register_id.academic_year',string='Academic Year',
+                                       help="Choose Academic year for which the admission is choosing")
+    #academic_year = fields.Many2one('eagleedu.academic.year', string='Academic Year')
     group_division = fields.Many2one('eagleedu.group_division')
-
     student_id=fields.Char('Student Id')
     roll_no = fields.Integer('Roll No')
     section=fields.Char('Section')
-    state = fields.Selection([('draft', 'Draft'), ('verification', 'Verify'),
-                               ('approve', 'Approve'), ('done', 'Done')],
+    state = fields.Selection([('draft', 'Draft'), ('verification', 'Verify'), ('approve', 'Approve'), ('done', 'Done')],
                               string='Status', required=True, default='draft', track_visibility='onchange')
-
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.user.company_id)
     email = fields.Char(string="Student Email", help="Enter E-mail id for contact purpose")
     phone = fields.Char(string="Student Phone", help="Enter Phone no. for contact purpose")
     mobile = fields.Char(string="Student Mobile", help="Enter Mobile num for contact purpose")
-    nationality = fields.Many2one('res.country', string='Nationality', ondelete='restrict',default=19,
-                                  help="Select the Nationality")
+    #nationality = fields.Many2one('res.country', string='Nationality', ondelete='restrict',default=19,
+    #                              help="Select the Nationality")
+
+    verified_by = fields.Many2one('res.users', string='Verified by', help="The Document is verified by")
 
     @api.onchange('guardian_relation')
     def guardian_relation_changed(self):

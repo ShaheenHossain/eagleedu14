@@ -42,40 +42,39 @@ class importAllStudent(models.Model):
     def import_students(self):
         lst = [('register_id', '=', self.register_id.id)]
 
-
         if self.import_section:
             lst.append(('section', '=', self.import_section))
         if self.import_group:
             lst.append(('group','=',self.import_group))
 
         applications=self.env['eagleedu.application'].search(lst,order='id asc')
-        # for app in applications:
-        #     if app.student_id:
-        #         # verify student
-        #         document_ids = self.env['eagleedu.documents'].search([('application_ref', '=', app.id)])
-        #         # if not document_ids:
-        #         #     raise ValidationError(_('No Documents provided'))
-        #         app.write({
-        #             'state': 'verification'
-        #         })
-        #         # insert documents
-        #         doc_details={ 'application_ref': app.id,
-        #                       'document_name':1,
-        #                       'has_hard_copy':False,
-        #                       'reference':1
-        #                       }
-        #         documents=self.env['eagleedu.documents']
-        #         document=documents.create(doc_details)
-        #         document.write({
-        #             'verified_by': self.env.uid,
-        #             'verified_date': datetime.now().strftime("%Y-%m-%d"),
-        #             'state': 'done'
-        #         })
-        #         app.write({
-        #             'verified_by': self.env.uid,
-        #             'state': 'approve',
-        #             'class_id': self.assign_class.id,
-        #             'import_id': self.id
-        #         })
-        #         student=app.create_student()
+        for app in applications:
+            if app.student_id:
+                # verify student
+                # document_ids = self.env['eagleedu.documents'].search([('application_ref', '=', app.id)])
+                # if not document_ids:
+                #     raise ValidationError(_('No Documents provided'))
+                app.write({
+                    'state': 'verification'
+                })
+                # insert documents
+                # doc_details={ 'application_ref': app.id,
+                #               'document_name':1,
+                #               'has_hard_copy':False,
+                #               'reference':1
+                #               }
+                # documents=self.env['eagleedu.documents']
+                # document=documents.create(doc_details)
+                # document.write({
+                #     'verified_by': self.env.uid,
+                #     'verified_date': datetime.now().strftime("%Y-%m-%d"),
+                #     'state': 'done'
+                # })
+                app.write({
+                    'verified_by': self.env.uid,
+                    'state': 'approve',
+                    'class_id': self.assign_class.id,
+                    'import_id': self.id
+                })
+                student=app.create_student()
 

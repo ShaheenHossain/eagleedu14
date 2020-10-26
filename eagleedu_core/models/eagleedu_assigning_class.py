@@ -13,6 +13,7 @@ class EagleeduAssigningClass(models.Model):
     keep_roll_no=fields.Boolean("keep Roll No")
     class_id = fields.Many2one('eagleedu.class', string='Class')
     student_list = fields.One2many('eagleedu.student.list', 'connect_id', string="Students")
+    student_line = fields.Many2one('eagleedu.student.list', string="Students List")
     admitted_class = fields.Many2one('eagleedu.class.division', string="Admitted Class" )
     assigned_by = fields.Many2one('res.users', string='Assigned By', default=lambda self: self.env.uid)
     state = fields.Selection([('draft', 'Draft'), ('done', 'Done')],
@@ -93,11 +94,9 @@ class EagleeduAssigningClass(models.Model):
 
     # @api.model
     def get_student_list(self):
-        """returns the list of students applied to join the selected class"""
         for rec in self:
             for line in rec.student_list:
                 line.unlink()
-            # TODO apply filter not to get student assigned previously
             students = self.env['eagleedu.student'].search([
                 ('class_id', '=', rec.admitted_class.id),('assigned', '=', False)])
             if not students:
@@ -113,8 +112,7 @@ class EagleeduAssigningClass(models.Model):
                 stud.assigned=True
                 values.append(stud_line)
             for line in values:
-                rec.student_list = self.env['eagleedu.student.list'].create(line)
-
+                rec.student_line = self.env['eagleedu.student.list'].create(line)
 
 
 class EagleeduStudentList(models.Model):
@@ -127,18 +125,25 @@ class EagleeduStudentList(models.Model):
     stu_id=fields.Char(string="Id",related='adm_no.student_id')
     class_id = fields.Many2one('eagleedu.class', string='Level')
     section_id = fields.Many2one('eagleedu.class.division', string='Class')
-    student_list = fields.Many2one('eagleedu.student.list', string='Student List')
+    # student_list = fields.Many2one('eagleedu.student.list', string='Student List')
     roll_no = fields.Integer( string='Roll No')
 
-#
-# class EducationStudentList(models.Model):
-#     _name = 'education.student.list'
-#     _inherit = ['mail.thread']
-#
-#     connect_id = fields.Many2one('education.student.class', string='Class')
-#     student_id = fields.Many2one('education.student', string='Student')
-#     stu_id=fields.Char(string="Id",related='student_id.student_id')
-#     class_id = fields.Many2one('education.class', string='Level')
-#     section_id = fields.Many2one('education.class.division', string='Class')
-#     roll_no = fields.Integer( string='Roll No')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
